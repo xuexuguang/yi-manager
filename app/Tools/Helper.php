@@ -24,10 +24,7 @@ if (! function_exists('responseJson')) {
      * @author xiaoyi <769076918@qq.com>
      * @date   2018-09-21 16:03:37
      */
-    function responseJson(
-        $status, $data = [], $total = false,
-        $msg = '', $report_header = false,
-        $http_code = 200)
+    function responseJson($status, $data = [], $total = false, $msg = '', $http_code = 200)
     {
         $msg = empty($msg) ? Code::$MSG[$status] : $msg;
         $result = [
@@ -39,10 +36,6 @@ if (! function_exists('responseJson')) {
                 'total' => (int)$total,
                 'list'  => $data,
             ];
-
-            if ($report_header) {
-                $result['data']['headers'] = $report_header;
-            }
         } else {
             $result['data'] = $data;
         }

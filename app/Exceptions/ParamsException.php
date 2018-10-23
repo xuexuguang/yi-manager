@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 
+use App\Tools\Code;
+
 /**
  * Class ReportException
  *
@@ -14,5 +16,5 @@ class ParamsException extends BaseException
 {
     public $httpCode  = 404;
     public $errorMsg  = '参数错误.';
-    public $errorCode = 10000;
+    public $errorCode = Code::PARAMS_ERR;
 }

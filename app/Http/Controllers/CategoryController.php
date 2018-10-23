@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 
+use App\Exceptions\addException;
 use App\Exceptions\CategoryException;
+use App\Exceptions\DataNotFoundException;
+use App\Exceptions\UpdateException;
 use App\Models\Category;
+use App\Tools\Code;
 use Illuminate\Http\Request;
 
 /**
@@ -18,7 +22,7 @@ class CategoryController extends Controller
 {
     public function createCategory(Request $request)
     {
-        $this->validate($request,[
+        $this->validate($request, [
             'name' => 'required|unique:category|max:20',
             'desc' => 'nullable|max:20',
         ]);
@@ -26,17 +30,64 @@ class CategoryController extends Controller
         $category = new Category();
         $category->name = $request->get('name');
         $category->desc = $request->get('desc', '');
-        $category->save();
+
+        if (! $category->save()) {
+            throw new addException();
+        }
+
+        return responseJson(Code::SUCCESS);
     }
 
     public function getAllCategories()
     {
-        $categories= Category::all();
-        if ($categories->isEmpty()){
+        $categories = Category::all();
+        if ($categories->isEmpty()) {
             throw new CategoryException();
         }
 
         return $categories;
+    }
+
+    public function updateCategory(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required|integer',
+            'name' => 'required|unique:category|max:20',
+            'desc' => 'nullable|max:20',
+        ]);
+
+        $category = Category::find($request->get('id'));
+
+        if (empty($category)) {
+            throw new DataNotFoundException();
+        }
+
+        $category->name = $request->get('name');
+        $category->desc = $request->get('desc', '');
+        if (! $category->save()) {
+            throw new UpdateException();
+        }
+
+        return responseJson(Code::SUCCESS);
+    }
+
+    public function deleteCategory(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required|integer',
+        ]);
+
+        $category = Category::find($request->get('id'));
+
+        if (empty($category)) {
+            throw new DataNotFoundException();
+        }
+
+        if (! $category->delete()) {
+            throw new UpdateException();
+        }
+
+        return responseJson(Code::SUCCESS);
     }
 
 }

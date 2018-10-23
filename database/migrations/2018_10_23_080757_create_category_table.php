@@ -17,6 +17,7 @@ class CreateCategoryTable extends Migration
             $table->increments('id');
             $table->string('name','20')->comment('分类名称');
             $table->string('desc','20')->comment('分类描述');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

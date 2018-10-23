@@ -15,7 +15,17 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-// 分类管理
-$router->get('category/all', 'CategoryController@getAllCategories');
 
-$router->post('category/create', 'CategoryController@createCategory');
+$router->group(['prefix' => 'category'], function () use ($router) {
+    // 分类列表
+    $router->get('all', 'CategoryController@getAllCategories');
+
+    // 添加分类
+    $router->post('category/create', 'CategoryController@createCategory');
+
+    // 删除分类
+    $router->post('category/delete', 'CategoryController@deleteCategory');
+
+    // 修改分类
+    $router->post('category/update', 'CategoryController@updateCategory');
+});

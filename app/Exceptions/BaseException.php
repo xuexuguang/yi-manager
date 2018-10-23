@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 
+use App\Tools\Code;
+
 /**
  * Class BaseException
  *
@@ -20,8 +22,12 @@ class BaseException extends \Exception
     {
         if (! empty($params) && is_array($params)) {
             array_key_exists('httpCode', $params) && $this->httpCode = $params['httpCode'];
-            array_key_exists('errorMsg', $params) && $this->errorMsg = $params['errorMsg'];
             array_key_exists('errorCode', $params) && $this->errorCode = $params['errorCode'];
+            if (array_key_exists('errorMsg', $params)) {
+                $this->errorMsg = $params['errorMsg'];
+            } elseif (! empty(Code::$MSG[$this->errorCode])) {
+                $this->errorMsg = Code::$MSG[$this->errorCode];
+            }
         }
         return null;
     }
