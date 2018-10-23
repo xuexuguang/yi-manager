@@ -15,6 +15,7 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-
 // 分类管理
-$router->get('test', 'ExampleController@test');
+$router->get('category/all', 'CategoryController@getAllCategories');
+
+$router->post('category/create', 'CategoryController@createCategory');

@@ -12,11 +12,27 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class Handler extends ExceptionHandler
 {
     /**
+     * @var int 全局统一错误状态码
+     */
+    private $errorCode;
+
+    /**
+     * @var string 全局统一错误消息
+     */
+    private $errorMsg;
+
+    /**
+     * @var int 全局统一httpCode
+     */
+    private $httpCode;
+
+    /**
      * A list of the exception types that should not be reported.
      *
      * @var array
      */
     protected $dontReport = [
+        CategoryException::class,
         AuthorizationException::class,
         HttpException::class,
         ModelNotFoundException::class,
@@ -45,6 +61,30 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        return parent::render($request, $exception);
+
+        if ($exception instanceof BaseException) {
+            $this->httpCode = $exception->httpCode;
+            $this->errorMsg = $exception->errorMsg;
+            $this->errorCode = $exception->errorCode;
+        } else {
+            //如果是服务器的未知错误
+            if (env('APP_DEBUG')) {
+                return parent::render($request, $exception);
+            } else {
+                $this->httpCode = 500;
+                $this->errorMsg = '服务器未知错误';
+                $this->errorCode = 999;
+                Log::error($exception->getMessage());
+            }
+        }
+
+        return [
+           'code' => $this->errorCode,
+           'msg'  => $this->errorMsg,
+           'data' => [
+               'request_url' => $request->url(),
+           ]
+        ];
+        // return parent::render($request, $exception);
     }
 }

@@ -17,7 +17,8 @@ class ExampleController extends Controller
 
     public function test()
     {
-        return 'test';
+        print_r($_ENV);die;
+        return 1/0;
     }
 
     //
