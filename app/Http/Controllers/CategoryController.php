@@ -51,7 +51,7 @@ class CategoryController extends Controller
     public function updateCategory(Request $request)
     {
         $this->validate($request, [
-            'id' => 'required|integer',
+            'id'   => 'required|integer',
             'name' => 'required|unique:category|max:20',
             'desc' => 'nullable|max:20',
         ]);
@@ -83,7 +83,8 @@ class CategoryController extends Controller
             throw new DataNotFoundException();
         }
 
-        if (! $category->delete()) {
+        $category->delete();
+        if (! $category->trashed()) {
             throw new UpdateException();
         }
 

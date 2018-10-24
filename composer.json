@@ -7,6 +7,7 @@
     "require": {
         "php": ">=7.1.3",
         "laravel/lumen-framework": "5.7.*",
+        "symfony/var-dumper": "^4.1",
         "vlucas/phpdotenv": "~2.2"
     },
     "require-dev": {
@@ -16,7 +17,8 @@
     },
     "autoload": {
         "files": [
-            "app/Tools/Helper.php"
+            "app/Tools/Helper.php",
+            "config/constant.php"
         ],
         "classmap": [
             "database/seeds",

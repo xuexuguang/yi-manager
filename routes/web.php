@@ -21,11 +21,28 @@ $router->group(['prefix' => 'category'], function () use ($router) {
     $router->get('all', 'CategoryController@getAllCategories');
 
     // 添加分类
-    $router->post('category/create', 'CategoryController@createCategory');
+    $router->post('create', 'CategoryController@createCategory');
 
     // 删除分类
-    $router->post('category/delete', 'CategoryController@deleteCategory');
+    $router->post('delete', 'CategoryController@deleteCategory');
 
     // 修改分类
-    $router->post('category/update', 'CategoryController@updateCategory');
+    $router->post('update', 'CategoryController@updateCategory');
 });
+
+
+$router->group(['prefix' => 'clothes'], function () use ($router) {
+    // 衣物列表
+    $router->get('all', 'ClothesController@getAllClothes');
+
+    // 添加衣物
+    $router->post('create', 'ClothesController@createClothes');
+
+    // 删除衣物
+    $router->post('delete', 'ClothesController@deleteClothes');
+
+    // 修改衣物
+    $router->post('update', 'ClothesController@updateClothes');
+});
+
+

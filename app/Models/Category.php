@@ -3,6 +3,8 @@
 namespace App\Models;
 
 
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 /**
  * Class Category
  *
@@ -12,6 +14,10 @@ namespace App\Models;
  */
 class Category extends BaseModel
 {
+    use SoftDeletes;
+
+    public $dateFormat = 'U';
+
     protected $table = "category";
 
     protected $dates = ['deleted_at'];
