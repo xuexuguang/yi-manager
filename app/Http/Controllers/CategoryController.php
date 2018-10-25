@@ -45,7 +45,7 @@ class CategoryController extends Controller
             throw new CategoryException();
         }
 
-        return $categories;
+        return responseJson(Code::SUCCESS, $categories);
     }
 
     public function updateCategory(Request $request)

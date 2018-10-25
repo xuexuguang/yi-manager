@@ -66,18 +66,26 @@ class Clothes extends BaseModel
 
     public static function getAllInCategory(int $id)
     {
-        return self::select()
-                   ->where('cat_id', '=', $id)
-                   ->orderBy('updated_at', 'desc')
-                   ->get();
+        $query = self::select()
+                     ->where('cat_id', '=', $id);
+
+        $total = $query->count();
+        $data = $query->orderBy('updated_at', 'desc')
+                      ->get();
+
+        return compact('total', 'data');
     }
 
     public static function getAllInSeason(int $id)
     {
-        return self::select()
-                   ->where('season', '=', $id)
-                   ->orderBy('updated_at', 'desc')
-                   ->get();
+        $query = self::select()
+                     ->where('season', '=', $id);
+
+        $total = $query->count();
+        $data = $query->orderBy('updated_at', 'desc')
+                      ->get();
+
+        return compact('total', 'data');
     }
 
 }

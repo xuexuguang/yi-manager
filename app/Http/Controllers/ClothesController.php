@@ -64,54 +64,55 @@ class ClothesController extends Controller
         return responseJson(Code::SUCCESS, $result['data'], $result['total']);
     }
 
-    public function getAllBySeason(Request $request)
+    public function getAllInSeason(Request $request)
     {
         $this->validate($request,
             ['id' => 'required|integer|in:1,2,3,4']
         );
 
         $result = Clothes::getAllInSeason($request->get('id'));
-        if ($result->isEmpty()) {
+        if ($result['data']->isEmpty()) {
             throw new DataNotFoundException();
         }
 
-        return responseJson(Code::SUCCESS, $result);
+        return responseJson(Code::SUCCESS, $result['data'], $result['total']);
     }
 
-    public function getAllInCategory(Request $request)
+    public function getTrashClothes()
     {
-        $this->validate($request,
-            ['id' => 'required|integer']
-        );
-
-        $result = Clothes::getAllInCategory($request->get('id'));
-        if ($result->isEmpty()) {
+        $clothes = Clothes::onlyTrashed()->get();
+        if ($clothes->isEmpty()) {
             throw new DataNotFoundException();
         }
 
-        return responseJson(Code::SUCCESS, $result);
+        return responseJson(Code::SUCCESS,$clothes);
     }
 
-    public function updateClothes(Request $request)
+    public function restoreClothes(Request $request)
     {
         $this->validate($request, [
-            'id'       => 'required|integer',
-            'name'     => 'required|string|max:20',
-            'desc'     => 'nullable|string|max:20',
-            'cat_id'   => 'required|integer',
-            // 'cat_id'   => 'required|integer|exists:category',
-            'price'    => 'nullable|Numeric',
-            'season'   => 'required|integer|in:1,2,3,4',
-            'img_path' => 'nullable|string',
+            'id' => 'required|string',
         ]);
 
-        $clothes = Clothes::find($request->get('id'));
-        if (empty($clothes)) {
-            throw new DataNotFoundException();
+        $clothesID = $request->get('id');
+
+        if ($clothesID == 'all') {
+            $clothes= Clothes::withTrashed();
+        } elseif (strpos($clothesID,',')) {
+            $clothesID = explode(',',$clothesID);
+            // 恢复多件衣物
+            $clothes= Clothes::withTrashed()->whereIn('id',$clothesID);
+        } else {
+            // 恢复单件衣物
+            $clothes = Clothes::withTrashed()->where('id','=',$clothesID);
         }
 
-        if (! $clothes->update($request->all())) {
-            throw new UpdateException();
+        if (empty($clothes)) {
+            throw new DataNotFoundException(['errorMsg' => '未找到需要还原的衣物.']);
+        }
+
+        if (! $clothes->restore()) {
+            throw new UpdateException(['errorMsg' => '还原衣物失败']);
         }
 
         return responseJson(Code::SUCCESS);
@@ -137,11 +138,43 @@ class ClothesController extends Controller
         return responseJson(Code::SUCCESS);
     }
 
-    public function trashClothes()
+    public function getAllInCategory(Request $request)
     {
-        $posts = Clothes::withTrashed()->get();
+        $this->validate($request,
+            ['id' => 'required|integer']
+        );
 
-        return responseJson(Code::SUCCESS,$posts);
+        $result = Clothes::getAllInCategory($request->get('id'));
+        if ($result['data']->isEmpty()) {
+            throw new DataNotFoundException();
+        }
+
+        return responseJson(Code::SUCCESS, $result['data'], $result['total']);
+    }
+
+    public function updateClothes(Request $request)
+    {
+        $this->validate($request, [
+            'id'       => 'required|integer',
+            'name'     => 'required|string|max:20',
+            'desc'     => 'nullable|string|max:20',
+            'cat_id'   => 'required|integer',
+            // 'cat_id'   => 'required|integer|exists:category',
+            'price'    => 'nullable|Numeric',
+            'season'   => 'required|integer|in:1,2,3,4',
+            'img_path' => 'nullable|string',
+        ]);
+
+        $clothes = Clothes::find($request->get('id'));
+        if (empty($clothes)) {
+            throw new DataNotFoundException();
+        }
+
+        if (! $clothes->update($request->all())) {
+            throw new UpdateException();
+        }
+
+        return responseJson(Code::SUCCESS);
     }
 
 }

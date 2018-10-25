@@ -43,6 +43,19 @@ $router->group(['prefix' => 'clothes'], function () use ($router) {
 
     // 修改衣物
     $router->post('update', 'ClothesController@updateClothes');
+
+    // 获取分类衣物
+    $router->get('category', 'ClothesController@getAllInCategory');
+
+    // 获取季节可以传的衣物
+    $router->get('season', 'ClothesController@getAllInSeason');
+
+    // 获取垃圾回收站衣物
+    $router->get('trash', 'ClothesController@getTrashClothes');
+
+    // 还原删除的衣物
+    $router->post('restore', 'ClothesController@restoreClothes');
+
 });
 
 

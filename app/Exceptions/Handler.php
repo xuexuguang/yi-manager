@@ -79,7 +79,7 @@ class Handler extends ExceptionHandler
         }
 
         return [
-           'code' => $this->errorCode,
+           'status' => $this->errorCode,
            'msg'  => $this->errorMsg,
            'data' => [
                'request_url' => $request->url(),
